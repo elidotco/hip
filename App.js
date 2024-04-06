@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen } from "./screens/index";
+import { HomeScreen, SearchBarModal } from "./screens/index";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -15,6 +15,18 @@ export default function App() {
           options={{ headerShown: false }}
           component={HomeScreen}
         />
+        <Stack.Group
+          screenOptions={{
+            presentation: "modal",
+            animation: "slide_from_bottom",
+          }}
+        >
+          <Stack.Screen
+            name="Homsde"
+            options={{ headerShown: false, presentation: "modal" }}
+            component={SearchBarModal}
+          />
+        </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
   );
