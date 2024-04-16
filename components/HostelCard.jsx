@@ -1,9 +1,15 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { urlFor } from "../sanity";
 
-const HostelCard = ({ one }) => {
+const HostelCard = ({ one, data }) => {
+  console.log(data);
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => navigation.navigate("HostelScreen", { id: data._id })}
+    >
       <View
         className={`${
           one === 1 ? "w-full my-5" : "w-64 mx-5"
@@ -12,14 +18,16 @@ const HostelCard = ({ one }) => {
         <View className="bg-green-500 w-full  bg-opacity-25 -z-10  h-full absolute top-0 rounded-lg">
           <Image
             source={{
-              uri: "https://images.pexels.com/photos/17056814/pexels-photo-17056814/free-photo-of-silhouetted-trees-against-orange-red-sky-at-dusk.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+              uri: data?.cover_image
+                ? urlFor(data.cover_image).width(500).url()
+                : null,
             }}
             className="w-full h-full rounded-lg"
           />
         </View>
         <View className="px-5  h-full  py-6">
           <Text className="text-xl mt-auto text-gray-200 font-semibold">
-            Hostel Card
+            {data.name}
           </Text>
         </View>
       </View>

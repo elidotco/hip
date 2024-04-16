@@ -15,15 +15,41 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SearchBarModal from "./SearchBarModal";
 import HostelCard from "../components/HostelCard";
 import { Navbar } from "../components";
+import client from "../sanity";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const HomeScreen = ({ navigation }) => {
+  const [datas, setDatas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    client
+      .fetch(
+        `
+    *[_type=='hostels']{
+      name,
+      _id,
+      cover_image,
+      featured
+    }`
+      )
+      .then((data) => {
+        setDatas(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Render loading indicator while data is being fetched
+  }
   return (
     <>
       <SafeAreaView
         className="bg-slate-100 h-full"
         style={styles.droidSafeArea}
       >
-        <View className="flex justify-between sticky top-0 bg-slate-100 flex-row items-center shadow-black shadow-md py-5 px-5">
+        <View className="flex justify-between bg-slate-100 flex-row items-center  py-5 px-5">
           <View className="flex flex-row items-center gap-2">
             <View className="w-10 h-10 rounded-full flex justify-center items-center border border-gray-200 pl-1 bg-gray-300">
               <SvgUri
@@ -35,12 +61,6 @@ const HomeScreen = ({ navigation }) => {
 
             <Text className="text-base font-medium">Bamfo Eli</Text>
           </View>
-          <TouchableOpacity
-            className="border flex items-center justify-center rounded-full text-green-600 w-10 h-10"
-            onPress={() => navigation.navigate("Homsde")}
-          >
-            <MagnifyingGlassIcon color="green" />
-          </TouchableOpacity>
         </View>
         <ScrollView>
           <View className="">
@@ -53,10 +73,13 @@ const HomeScreen = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
-              <HostelCard />
-              <HostelCard />
-              <HostelCard />
-              <HostelCard />
+              {datas.map((item) => {
+                return item.featured === "yes" ? (
+                  <HostelCard key={item._id} data={item} />
+                ) : (
+                  ""
+                );
+              })}
             </ScrollView>
           </View>
           <View className="pt-20 px-6">
@@ -73,10 +96,9 @@ const HomeScreen = ({ navigation }) => {
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
-              <HostelCard one={1} />
-              <HostelCard one={1} />
-              <HostelCard one={1} />
-              <HostelCard one={1} />
+              {datas.map((item) => {
+                return <HostelCard one={1} key={item._id} data={item} />;
+              })}
             </ScrollView>
           </View>
         </ScrollView>

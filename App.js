@@ -2,7 +2,13 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen, SearchBarModal } from "./screens/index";
+import {
+  HomeScreen,
+  HostelScreen,
+  SearchBarModal,
+  FavScreen,
+  SearchScreen,
+} from "./screens/index";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -14,6 +20,21 @@ export default function App() {
           name="Home"
           options={{ headerShown: false }}
           component={HomeScreen}
+        />
+        <Stack.Screen
+          name="HostelScreen"
+          options={{ headerShown: false }}
+          component={HostelScreen}
+        />
+        <Stack.Screen
+          name="FavScreen"
+          options={{ headerShown: false }}
+          component={FavScreen}
+        />
+        <Stack.Screen
+          name="SearchScreen"
+          options={{ headerShown: false }}
+          component={SearchScreen}
         />
         <Stack.Group
           screenOptions={{
