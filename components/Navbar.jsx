@@ -8,10 +8,7 @@ const Navbar = () => {
   const navigation = useNavigation();
   return (
     <View className="absolute bottom-0 bg-white flex-row shadow-lg flex justify-between items-center w-full rounded-t-[30px] h-20 px-5 py-5">
-      <TouchableOpacity
-        className="  px-9 rounded-3xl py-3"
-        onPress={() => navigation.navigate("HomeScreen")}
-      >
+      <TouchableOpacity className="  px-9 rounded-3xl py-3">
         <HomeIcon />
       </TouchableOpacity>
       <TouchableOpacity

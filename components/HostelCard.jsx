@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import { urlFor } from "../sanity";
 
 const HostelCard = ({ one, data }) => {
-  console.log(data);
   const navigation = useNavigation();
   return (
     <TouchableOpacity

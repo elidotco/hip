@@ -8,7 +8,9 @@ import {
   SearchBarModal,
   FavScreen,
   SearchScreen,
+  LoginScreen,
 } from "./screens/index";
+import SplashScreen from "./screens/SplashScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -17,9 +19,19 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Splash"
+          options={{ headerShown: false }}
+          component={SplashScreen}
+        />
+        <Stack.Screen
           name="Home"
           options={{ headerShown: false }}
           component={HomeScreen}
+        />
+        <Stack.Screen
+          name="Login"
+          options={{ headerShown: false }}
+          component={LoginScreen}
         />
         <Stack.Screen
           name="HostelScreen"

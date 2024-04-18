@@ -18,30 +18,59 @@ import { Navbar } from "../components";
 import client from "../sanity";
 import { useState } from "react";
 import { useEffect } from "react";
+import { getArrayData, getUserInfo, storeArrayData } from "../storage";
 
 const HomeScreen = ({ navigation }) => {
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState();
+  const checkUserInfo = async () => {
+    const userInfo = await getUserInfo();
+    // Assuming getUserInfo is an async function
+    const fav = getArrayData((key = "Fav"));
+    if (userInfo !== null) {
+      setUser(userInfo);
+      if (fav === null) {
+        const emp = [];
+        storeArrayData((key = "fav"), (value = emp));
+      }
+
+      // User is not logged in
+      client
+        .fetch(
+          `
+          *[_type=='hostels']{
+            name,
+            _id,
+            cover_image,
+            featured
+          }
+          `
+        )
+        .then((data) => {
+          setDatas(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching hostel data:", error);
+          setLoading(false);
+        });
+    } else {
+      // User is logged in
+      navigation.replace("Home"); // Navigate to the "Home" screen
+    }
+  };
 
   useEffect(() => {
-    client
-      .fetch(
-        `
-    *[_type=='hostels']{
-      name,
-      _id,
-      cover_image,
-      featured
-    }`
-      )
-      .then((data) => {
-        setDatas(data);
-        setLoading(false);
-      });
+    checkUserInfo(); // Call the function to check user information
   }, []);
 
   if (loading) {
-    return <Text>Loading...</Text>; // Render loading indicator while data is being fetched
+    return (
+      <View className="flex flex-1 justify-center items-center">
+        <Text className="text-xl">Loading...</Text>
+      </View>
+    ); // Render loading indicator while data is being fetched
   }
   return (
     <>
@@ -51,15 +80,15 @@ const HomeScreen = ({ navigation }) => {
       >
         <View className="flex justify-between bg-slate-100 flex-row items-center  py-5 px-5">
           <View className="flex flex-row items-center gap-2">
-            <View className="w-10 h-10 rounded-full flex justify-center items-center border border-gray-200 pl-1 bg-gray-300">
+            <View className="w-14 h-14 rounded-full flex justify-center items-center border border-gray-200 pl-1 bg-gray-300">
               <SvgUri
                 width="80%"
                 height="80%"
-                uri="https://api.dicebear.com/8.x/miniavs/svg"
+                uri={`https://api.dicebear.com/8.x/miniavs/svg?seed=${user}`}
               />
             </View>
 
-            <Text className="text-base font-medium">Bamfo Eli</Text>
+            <Text className="text-base font-medium">{user}</Text>
           </View>
         </View>
         <ScrollView>
@@ -87,9 +116,6 @@ const HomeScreen = ({ navigation }) => {
               <Text className="text-2xl  py-5 font-semibold">
                 Close To Campus
               </Text>
-              <TouchableOpacity className=" shadow-sm flex items-center justify-center rounded-full bg-white text-gray-200 w-10 h-10">
-                <MagnifyingGlassIcon color="gray" />
-              </TouchableOpacity>
             </View>
             <ScrollView
               className=" w-full"

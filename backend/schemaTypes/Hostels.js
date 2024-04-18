@@ -25,6 +25,11 @@ export default {
       type: 'string',
     },
     {
+      name: 'distance',
+      title: 'Distance',
+      type: 'number',
+    },
+    {
       name: 'mapping',
       title: 'Mapping',
       type: 'document',
