@@ -24,44 +24,44 @@ const HomeScreen = ({ navigation }) => {
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
-  const checkUserInfo = async () => {
-    const userInfo = await getUserInfo();
-    // Assuming getUserInfo is an async function
-    const fav = getArrayData((key = "Fav"));
-    if (userInfo !== null) {
-      setUser(userInfo);
-      if (fav === null) {
-        const emp = [];
-        storeArrayData((key = "fav"), (value = emp));
-      }
-
-      // User is not logged in
-      client
-        .fetch(
-          `
-          *[_type=='hostels']{
-            name,
-            _id,
-            cover_image,
-            featured
-          }
-          `
-        )
-        .then((data) => {
-          setDatas(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching hostel data:", error);
-          setLoading(false);
-        });
-    } else {
-      // User is logged in
-      navigation.replace("Home"); // Navigate to the "Home" screen
-    }
-  };
 
   useEffect(() => {
+    const checkUserInfo = async () => {
+      const userInfo = await getUserInfo();
+      // Assuming getUserInfo is an async function
+      const fav = getArrayData((key = "Fav"));
+      if (userInfo !== null) {
+        setUser(userInfo);
+        if (fav === null) {
+          const emp = [];
+          storeArrayData((key = "fav"), (value = emp));
+        }
+
+        // User is not logged in
+        client
+          .fetch(
+            `
+            *[_type=='hostels']{
+              name,
+              _id,
+              cover_image,
+              featured
+            }
+            `
+          )
+          .then((data) => {
+            setDatas(data);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching hostel data:", error);
+            setLoading(false);
+          });
+      } else {
+        // User is logged in
+        navigation.replace("Login"); // Navigate to the "Home" screen
+      }
+    };
     checkUserInfo(); // Call the function to check user information
   }, []);
 
