@@ -30,11 +30,13 @@ const HomeScreen = ({ navigation }) => {
       const userInfo = await getUserInfo();
       // Assuming getUserInfo is an async function
       const fav = getArrayData((key = "Fav"));
+
       if (userInfo !== null) {
         setUser(userInfo);
         if (fav === null) {
           const emp = [];
           storeArrayData((key = "fav"), (value = emp));
+          storeArrayData((key = "booking"), (value = emp));
         }
 
         // User is not logged in

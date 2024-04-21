@@ -11,6 +11,7 @@ import {
   LoginScreen,
 } from "./screens/index";
 import SplashScreen from "./screens/SplashScreen";
+import HostelHomeScreen from "./screens/HoScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -24,15 +25,21 @@ export default function App() {
           component={SplashScreen}
         />
         <Stack.Screen
-          name="Home"
-          options={{ headerShown: false }}
-          component={HomeScreen}
-        />
-        <Stack.Screen
           name="Login"
           options={{ headerShown: false }}
           component={LoginScreen}
         />
+        <Stack.Screen
+          name="Ho"
+          options={{ headerShown: false }}
+          component={HostelHomeScreen}
+        />
+        <Stack.Screen
+          name="Home"
+          options={{ headerShown: false }}
+          component={HomeScreen}
+        />
+
         <Stack.Screen
           name="HostelScreen"
           options={{ headerShown: false }}

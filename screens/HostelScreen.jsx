@@ -20,12 +20,57 @@ import {
 import client, { urlFor } from "../sanity";
 import RoomCard from "../components/RoomCard";
 import { getArrayData, storeArrayData } from "../storage";
+import AmenCard from "../components/AmenCard";
 
 const HostelScreen = ({ route, navigation }) => {
   const [fav, setFav] = useState(false);
   const [id] = useState(route.params.id);
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [clicked, setClicked] = useState(true);
+  const [room, setRoom] = useState("");
+  const [price, setPrice] = useState();
+  const [message, setMessage] = useState(false);
+
+  console.log(room, clicked);
+
+  const bookRoom = async () => {
+    if (datas.length > 0 && room) {
+      try {
+        const bookingDetails = {
+          hostelId: datas[0]._id,
+          room: room,
+          price: price,
+        };
+
+        // Get existing bookings from AsyncStorage
+        const existingBookings = (await getArrayData("bookings")) || [];
+
+        // Check if the selected room is already booked
+        const isRoomAlreadyBooked = existingBookings.some(
+          (booking) =>
+            booking.hostelId === datas[0]._id && booking.room === room
+        );
+
+        if (isRoomAlreadyBooked) {
+          console.log("This room has already been booked.");
+          // Optionally, provide feedback to the user that the room is already booked
+          return;
+        }
+
+        // If the room is not already booked, proceed with booking
+        const updatedBookings = [...existingBookings, bookingDetails];
+        await storeArrayData("bookings", updatedBookings);
+        setMessage(true);
+        setTimeout(() => {
+          setMessage(false);
+        }, 2000);
+      } catch (error) {
+        console.error("Error booking room:", error);
+        // Handle booking error
+      }
+    }
+  };
 
   useEffect(() => {
     client
@@ -138,7 +183,17 @@ const HostelScreen = ({ route, navigation }) => {
             showsHorizontalScrollIndicator={false}
           >
             {datas[0].room_types?.map((item, index) => (
-              <RoomCard key={index} data={item} />
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setClicked(item.type === room ? true : false),
+                    setRoom(item.type === room ? "" : item.type),
+                    setPrice(item.type === room ? "" : item.price),
+                    console.log(room, clicked);
+                }}
+              >
+                <RoomCard data={item} />
+              </TouchableOpacity>
             ))}
 
             {/* <RoomCard />
@@ -146,7 +201,35 @@ const HostelScreen = ({ route, navigation }) => {
             <RoomCard /> */}
           </ScrollView>
         </View>
+        <View className="px-6 py-10">
+          <TouchableOpacity
+            disabled={clicked}
+            className={
+              clicked
+                ? "bg-[#ccc] flex justify-center items-center  w-full h-[60px] rounded-md "
+                : "w-full h-[60px] flex justify-center items-center rounded-md  bg-[#007bff]"
+            }
+            onPress={() => bookRoom()}
+          >
+            <Text className="text-white"> Book An Appointment</Text>
+          </TouchableOpacity>
+        </View>
+        {message && (
+          <View
+            style={{
+              top: 20,
+              alignSelf: "center",
+              backgroundColor: "green",
+              padding: 10,
+              borderRadius: 10,
+              elevation: 5,
+            }}
+          >
+            <Text style={{ color: "#fff" }}>Appointment Successful!</Text>
+          </View>
+        )}
         {/* Rooom Types  */}
+        <AmenCard />
 
         <View className="pb-8">
           <Text className="text-2xl font-semibold px-6 py-10">Gallery</Text>

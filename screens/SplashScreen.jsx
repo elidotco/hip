@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace("Home"); // Replace 'ReplacementScreen' with the name of the screen you want to navigate to
+      navigation.replace("Login"); // Replace 'ReplacementScreen' with the name of the screen you want to navigate to
     }, 4000); // 4000 milliseconds = 4 seconds
 
     return () => clearTimeout(timer);

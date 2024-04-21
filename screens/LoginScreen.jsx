@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,79 +5,92 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { storeUserInfo } from "../storage";
+import React from "react";
+import RNPickerSelect from "react-native-picker-select";
 
 const LoginScreen = ({ navigation }) => {
-  const [name, setName] = useState("");
-  if (!name.trim()) {
-    console.log("Name cannot be empty");
-  }
-
-  const handleLogin = () => {
-    // Implement login logic here
-    storeUserInfo((userInfo = name));
-    navigation.replace("Home");
-
-    console.log("Name:", name);
-  };
-
   return (
-    <View className="flex flex-1 justify-center items-center px-7">
-      <Text className="text-3xl font-bold py-10">Welcome</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="enter your first Name"
-        value={name}
-        onChangeText={setName}
-      />
+    <View style={styles.container}>
+      <Text style={styles.logo}>Hip</Text>
+
+      <View style={styles.inputView}>
+        <RNPickerSelect
+          placeholder={{ label: "Select your Role", value: null }}
+          onValueChange={(value) => console.log(value)}
+          items={[
+            { label: "JavaScript", value: "JavaScript" },
+            { label: "TypeScript", value: "TypeScript" },
+            { label: "Python", value: "Python" },
+            { label: "Java", value: "Java" },
+            { label: "C++", value: "C++" },
+            { label: "C", value: "C" },
+          ]}
+        />
+      </View>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Username"
+          placeholderTextColor="#003f5c"
+        />
+      </View>
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.inputText}
+          placeholder="Password"
+          placeholderTextColor="#003f5c"
+          secureTextEntry={true}
+        />
+      </View>
       <TouchableOpacity
-        style={[styles.button, !name.trim() && styles.disabledButton]}
-        onPress={handleLogin}
-        disabled={!name.trim()}
+        style={styles.loginBtn}
+        onPress={() => navigation.navigate("Ho")}
       >
-        <Text style={styles.buttonText}>get Started</Text>
+        <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
+export default LoginScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
     backgroundColor: "#fff",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  input: {
-    width: "100%",
-    height: 60,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  disabledButton: {
-    backgroundColor: "#ccc",
-  },
-  button: {
-    width: "100%",
-    height: 60,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
-  buttonText: {
-    color: "#fff",
+  logo: {
     fontWeight: "bold",
+    fontSize: 50,
+    color: "#5a189a",
+    marginBottom: 40,
+  },
+  inputView: {
+    width: "80%",
+    backgroundColor: "#f2f2f2",
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 20,
+    justifyContent: "center",
+    padding: 20,
+  },
+  inputText: {
+    height: 50,
+    color: "#003f5c",
+  },
+  loginBtn: {
+    width: "80%",
+    backgroundColor: "#5a189a",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+    marginBottom: 10,
+  },
+  loginText: {
+    color: "white",
   },
 });
-
-export default LoginScreen;
