@@ -19,7 +19,7 @@ const ABScreen = ({ navigation }) => {
       </View>
       <View className="justify-center flex-1 items-center">
         <Text className="text-[#5a189a]">No Bookings Available</Text>
-        <View className="px-6  w-full">
+        <View className="px-6 gap- w-full">
           <ApproveCard />
           <ApproveCard />
           <ApproveCard />
