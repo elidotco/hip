@@ -33,6 +33,12 @@ const HostelHomeScreen = ({ navigation }) => {
       </ScrollView>
       <TouchableOpacity
         style={styles.logoutButton}
+        onPress={() => navigation.navigate("Dash")}
+      >
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.logoutButton}
         onPress={() => navigation.navigate("Home")}
       >
         <Text style={styles.buttonText}>Logout</Text>

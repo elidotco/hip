@@ -209,7 +209,7 @@ const HostelScreen = ({ route, navigation }) => {
                 ? "bg-[#ccc] flex justify-center items-center  w-full h-[60px] rounded-md "
                 : "w-full h-[60px] flex justify-center items-center rounded-md  bg-[#007bff]"
             }
-            onPress={() => bookRoom()}
+            onPress={() => navigation.navigate("Homsde")}
           >
             <Text className="text-white"> Book An Appointment</Text>
           </TouchableOpacity>

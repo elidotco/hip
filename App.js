@@ -12,6 +12,10 @@ import {
 } from "./screens/index";
 import SplashScreen from "./screens/SplashScreen";
 import HostelHomeScreen from "./screens/HoScreen";
+import DashScreen from "./screens/hostel/DashScreen";
+import { ABScreen, SettinsScreen } from "./screens/hostel";
+import BookingModal from "./screens/SearchBarModal";
+import BookingScreen from "./screens/SearchBarModal";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -39,6 +43,21 @@ export default function App() {
           options={{ headerShown: false }}
           component={HomeScreen}
         />
+        <Stack.Screen
+          name="Dash"
+          options={{ headerShown: false }}
+          component={DashScreen}
+        />
+        <Stack.Screen
+          name="AB"
+          options={{ headerShown: false }}
+          component={ABScreen}
+        />
+        <Stack.Screen
+          name="Settings"
+          options={{ headerShown: false }}
+          component={SettinsScreen}
+        />
 
         <Stack.Screen
           name="HostelScreen"
@@ -64,7 +83,7 @@ export default function App() {
           <Stack.Screen
             name="Homsde"
             options={{ headerShown: false, presentation: "modal" }}
-            component={SearchBarModal}
+            component={BookingScreen}
           />
         </Stack.Group>
       </Stack.Navigator>
