@@ -12,6 +12,11 @@ const BookingScreen = ({ navigation }) => {
   const [selectedRoomType, setSelectedRoomType] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [numberOfGuests, setNumberOfGuests] = useState("");
+  const prcie = {
+    four: 1850,
+    two: 3850,
+    one: 9850,
+  };
 
   const handleBookRoom = () => {
     // Here you can implement the logic to book the room
@@ -29,15 +34,12 @@ const BookingScreen = ({ navigation }) => {
 
       <View style={styles.input} className="items-center flex justify-center">
         <RNPickerSelect
-          placeholder={{ label: "Select your Role", value: null }}
-          onValueChange={(value) => console.log(value)}
+          placeholder={{ label: "Select Room Type", value: null }}
+          onValueChange={(value) => setSelectedRoomType(value)}
           items={[
-            { label: "JavaScript", value: "JavaScript" },
-            { label: "TypeScript", value: "TypeScript" },
-            { label: "Python", value: "Python" },
-            { label: "Java", value: "Java" },
-            { label: "C++", value: "C++" },
-            { label: "C", value: "C" },
+            { label: "Four In A Room", value: "four" },
+            { label: "Two In A Room", value: "two" },
+            { label: "One In A Room", value: "one" },
           ]}
         />
       </View>
@@ -48,13 +50,18 @@ const BookingScreen = ({ navigation }) => {
         value={selectedDate}
         onChangeText={setSelectedDate}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Number of Guests"
-        value={numberOfGuests}
-        onChangeText={setNumberOfGuests}
-        keyboardType="numeric"
-      />
+      <View className="flex flex-row gap-5 py-4">
+        <Text className="text-xl">
+          Price:
+          {selectedRoomType === "four"
+            ? prcie.four
+            : selectedRoomType === "two"
+            ? prcie.two
+            : selectedRoomType === "one"
+            ? prcie.one
+            : ""}
+        </Text>
+      </View>
       <TouchableOpacity style={styles.bookButton} onPress={handleBookRoom}>
         <Text style={styles.buttonText}>Book</Text>
       </TouchableOpacity>

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
+import { ApproveCard } from "../../components";
 
 const ABScreen = ({ navigation }) => {
   return (
@@ -18,6 +19,12 @@ const ABScreen = ({ navigation }) => {
       </View>
       <View className="justify-center flex-1 items-center">
         <Text className="text-[#5a189a]">No Bookings Available</Text>
+        <View className="px-6  w-full">
+          <ApproveCard />
+          <ApproveCard />
+          <ApproveCard />
+          <ApproveCard />
+        </View>
       </View>
     </View>
   );
