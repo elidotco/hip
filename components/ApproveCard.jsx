@@ -3,7 +3,7 @@ import React from "react";
 
 const ApproveCard = () => {
   return (
-    <View className="flex relative w-full h-64 px-5 py-5 bg-white shadow-md rounded-lg">
+    <View className="flex relative w-full h-64 mb-6 px-5 py-5 bg-white shadow-md rounded-lg">
       <View className="flex ">
         <Text className="text-lg py-2  w-full ">Ebenzer Ametepeh</Text>
         <Text className="text-lg py-2 ">Four In a Room</Text>
