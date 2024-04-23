@@ -7,7 +7,7 @@ const ApproveCard = () => {
       <View className="flex ">
         <Text className="text-lg py-2  w-full ">Ebenzer Ametepeh</Text>
         <Text className="text-lg py-2 ">Four In a Room</Text>
-        <Text className="text-lg py-2 ">Bed Tpye</Text>
+        <Text className="text-lg py-2 ">Top Bunk</Text>
         <Text
           className="text-lg  absolute bottom-12 right-2
       "

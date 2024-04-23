@@ -18,8 +18,7 @@ const ABScreen = ({ navigation }) => {
         </Text> */}
       </View>
       <View className="justify-center flex-1 items-center">
-        <Text className="text-[#5a189a]">No Bookings Available</Text>
-        <ScrollView className="w-full px-5  border">
+        <ScrollView className="w-full px-5 py-10">
           <View className=" w-full flex gap-y-6">
             <ApproveCard />
             <ApproveCard />
