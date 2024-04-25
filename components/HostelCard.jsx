@@ -3,11 +3,13 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { urlFor } from "../sanity";
 
-const HostelCard = ({ one, data }) => {
+const HostelCard = ({ one, data, user }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("HostelScreen", { id: data._id })}
+      onPress={() =>
+        navigation.navigate("HostelScreen", { id: data.id, user: user })
+      }
     >
       <View
         className={`${
@@ -17,9 +19,7 @@ const HostelCard = ({ one, data }) => {
         <View className="bg-green-500 w-full  bg-opacity-25 -z-10  h-full absolute top-0 rounded-lg">
           <Image
             source={{
-              uri: data?.cover_image
-                ? urlFor(data.cover_image).width(500).url()
-                : null,
+              uri: data.coverImage,
             }}
             className="w-full h-full rounded-lg"
           />

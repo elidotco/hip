@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,24 +8,100 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
-const BookingScreen = ({ navigation }) => {
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDoc,
+  doc,
+} from "firebase/firestore";
+import { useAuth } from "../auth/AuthProvider";
+import { db } from "../services/config";
+
+// Function to accept a student's booking
+
+const BookingScreen = ({ navigation, route }) => {
+  const { id, name } = route.params;
+  const [user, setUser] = useState();
+
+  const { users } = useAuth();
+
   const [selectedRoomType, setSelectedRoomType] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [numberOfGuests, setNumberOfGuests] = useState("");
+
+  const [message, setMessage] = useState(false);
   const prcie = {
     four: 1850,
     two: 3850,
     one: 9850,
   };
 
-  const handleBookRoom = () => {
-    // Here you can implement the logic to book the room
-    console.log("Room Type:", selectedRoomType);
-    console.log("Date:", selectedDate);
-    console.log("Number of Guests:", numberOfGuests);
-    // Example: call an API to book the room
-    // After booking, you can navigate back to the previous screen
-    navigation.goBack();
+  useEffect(() => {
+    const checkUserInfo = async () => {
+      const docRef = doc(db, "users", users);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setUser(docSnap.data());
+      } else {
+        // docSnap.data() will be undefined in this case
+      }
+    };
+    checkUserInfo(); // Call the function to check user information
+  }, []);
+
+  const price =
+    selectedRoomType === "four"
+      ? prcie.four
+      : selectedRoomType === "two"
+      ? prcie.two
+      : selectedRoomType === "one"
+      ? prcie.one
+      : "";
+
+  const bookingData = {
+    roomType: selectedRoomType,
+    studentName: user?.firstName + " " + user?.lastName,
+    studentId: users,
+    hosteId: id,
+    price: price,
+    hostelName: name,
+  };
+
+  const acceptBooking = async () => {
+    try {
+      // Add booking data to Firestore
+      const docRef = await addDoc(collection(db, "bookings"), {
+        ...bookingData,
+        timestamp: serverTimestamp(), // Add server timestamp for tracking booking time
+        approved: "Waiting",
+      });
+      console.log("Booking added with ID: ", docRef.id);
+      return true; // Return true indicating successful booking acceptance
+    } catch (error) {
+      console.error("Error adding booking: ", error);
+      return false; // Return false indicating failed booking acceptance
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Call acceptBooking function with bookingData
+    if (selectedRoomType === "" || selectedDate === "") {
+      return;
+    }
+    const success = await acceptBooking(bookingData);
+    if (success) {
+      // Handle success (e.g., show success message, clear form fields)
+      setMessage(true);
+      setTimeout(() => {
+        setMessage(false);
+      }, 2000);
+      navigation.goBack();
+      console.log("Booking accepted successfully!");
+    } else {
+      // Handle failure (e.g., show error message)
+      console.log("Failed to accept booking.");
+    }
   };
 
   return (
@@ -62,9 +138,23 @@ const BookingScreen = ({ navigation }) => {
             : ""}
         </Text>
       </View>
-      <TouchableOpacity style={styles.bookButton} onPress={handleBookRoom}>
+      <TouchableOpacity style={styles.bookButton} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Book</Text>
       </TouchableOpacity>
+      {message && (
+        <View
+          style={{
+            top: 20,
+            alignSelf: "center",
+            backgroundColor: "green",
+            padding: 10,
+            borderRadius: 10,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ color: "#fff" }}>Appointment Successful!</Text>
+        </View>
+      )}
     </View>
   );
 };

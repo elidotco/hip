@@ -6,88 +6,54 @@ import { useState } from "react";
 import client from "../sanity";
 import { useEffect } from "react";
 import { HostelCard } from "../components";
+import { collection, doc, getDocs, query, where } from "firebase/firestore";
+import { useAuth } from "../auth/AuthProvider";
+import { db } from "../services/config";
 
 const FavScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [datas, setDatas] = useState([]);
   const [book, setBook] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [none, setNone] = useState(false);
 
-  let uniqueChars = datas.reduce((result, item) => {
-    // Find the booking for the current hostel
-    const booking = book.find((ite) => ite.hostelId === item._id);
-    if (booking) {
-      // If a booking is found, add the hostel along with its rooms to the result
-      result.push({
-        hostel: item,
-        rooms: booking.room,
-      });
-    } else {
-      // If no booking is found, add only the hostel to the result
-      return;
-    }
-    return result;
-  }, []);
-  const deleteBooking = async (bookingId) => {
-    try {
-      // Retrieve the current list of bookings from AsyncStorage
-      const existingBookings = await getArrayData("bookings");
-
-      // Filter out the booking to be deleted
-      const updatedBookings = existingBookings.filter(
-        (booking) => booking.hostelId !== bookingId
-      );
-
-      storeArrayData("bokings", updatedBookings);
-      // Update AsyncStorage with the updated list of bookings
-      setDatas(updatedBookings);
-      // Update state to reflect the change
-
-      // Optionally, provide feedback to the user that the deletion was successful
-      console.log("Booking deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-      // Handle the error (e.g., display an error message to the user)
-    }
-  };
-
+  const { users, logout } = useAuth();
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch favorite hostels and bookings from AsyncStorage
-        const favs = (await getArrayData("fav")) || [];
-        const bookings = (await getArrayData((key = "bookings"))) || [];
-        setBook(bookings);
+    const dats = async () => {
+      const docRef = query(
+        collection(db, "bookings"),
+        where("studentId", "==", users)
+      );
+      const docSnap = await getDocs(docRef);
 
-        // Create a string of hostel IDs for filtering
-        const favHostelIds = favs.map((item) => `"${item}"`).join(",");
-        const bookingHostelIds = bookings
-          .map((item) => `"${item.hostelId}"`)
-          .join(",");
-        console.log(bookings);
+      if (!docSnap.empty) {
+        // Check if docSnap is not empty
+        const bookingData = [];
+        docSnap.forEach((doc) => {
+          // Add data of each document to the array
+          bookingData.push(doc.data());
+        });
 
-        // Construct a query to fetch hostel data based on favorite hostels and bookings
-        const query = `*[_type == 'hostels' && (_id in [${favHostelIds}] )] {
-          _id,
-          cover_image,
-          name
-        }`;
-        const query1 = `*[_type == 'hostels' && (_id in [${bookingHostelIds}] )] {
-          _id,
-          cover_image,
-          name
-        }`;
-        const response = await client.fetch(query);
-        setData(response);
-        const responses = await client.fetch(query1);
-        setDatas(responses);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        // Set the state with the array of booking data
+        setDatas(bookingData);
+        setLoading(false); // Set loading state to false
+      } else {
+        setNone(true);
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
       }
     };
-
-    fetchData();
+    dats();
   }, []);
-  console.log(datas, book, uniqueChars);
+  console.log(datas);
+
+  if (loading) {
+    return (
+      <View className="flex flex-1 justify-center items-center">
+        <Text className="text-xl">Loading...</Text>
+      </View>
+    ); // Render loading indicator while data is being fetched
+  }
 
   return (
     <View className="flex flex-1 pb-10">
@@ -98,9 +64,15 @@ const FavScreen = ({ navigation }) => {
         >
           <ArrowLeftIcon />
         </TouchableOpacity>
-        {/* <Text className="text-center py-6 font-bold text-xl">
-          My Favorite Hostels
-        </Text> */}
+        <TouchableOpacity
+          onPress={() => {
+            logout();
+            navigation.replace("Splash");
+          }}
+          className="ml-auto absolute top-16 right-5 "
+        >
+          <Text>Logout</Text>
+        </TouchableOpacity>
       </View>
       <ScrollView>
         <View className="pb-20 px-6">
@@ -109,35 +81,51 @@ const FavScreen = ({ navigation }) => {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
           >
-            {data?.map((item, index) => (
+            {/* {data?.map((item, index) => (
               <HostelCard key={index} data={item} one={1} />
-            ))}
+            ))} */}
 
             <View className="pt-20 ">
-              <Text className="text-2xl font-bold pb-10">BOOKiNGS</Text>
+              <Text className="text-2xl font-bold pb-10">BOOKINGS</Text>
 
-              {uniqueChars?.map((item, index) => (
-                <View
-                  key={index}
-                  className="w-full h-56 rounded-xl flex border px-5 py-5"
-                >
-                  <View className=" flex flex-row justify-between">
-                    <Text className="absolute top-20 text-2xl font-semibold">
-                      {item.hostel.name}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => deleteBooking(item.hostel._id)}
-                      className="ml-auto "
-                    >
-                      <Text>Heelo</Text>
-                    </TouchableOpacity>
+              {none ? (
+                <Text className="text-center items-center">
+                  You have not made any booking
+                </Text>
+              ) : (
+                datas.map((item, index) => (
+                  <View
+                    className="w-full h-56 rounded-xl mb-10 flex bg-white shadow-md px-5 py-5"
+                    key={index}
+                  >
+                    <View className=" flex flex-row justify-between">
+                      <Text className="absolute top-10 text-2xl font-semibold">
+                        {item.hostelName}
+                      </Text>
+                    </View>
+                    <View className="mt-auto flex flex-row justify-between">
+                      <Text>{`${item.roomType} in a room`}</Text>
+                      <Text>{item.price}</Text>
+                    </View>
+                    <View className="flex flex-row justify-between items-center pt-7">
+                      <Text>
+                        {item.approved}
+                        {item.approved === "Waiting"
+                          ? " For Approval"
+                          : item.approved === "Yes"
+                          ? " your booking has been Approved"
+                          : " your booking has been Denied"}
+                      </Text>
+                      <TouchableOpacity
+                        className="py-3 px-4 bg-green-400 disabled:bg-gray-400 rounded-lg"
+                        disabled={item.approved === "Waiting" ? true : false}
+                      >
+                        <Text>Pay</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                  <View className="mt-auto flex flex-row justify-between">
-                    <Text>{item.rooms}</Text>
-                    <Text>{item.price}</Text>
-                  </View>
-                </View>
-              ))}
+                ))
+              )}
             </View>
           </ScrollView>
         </View>

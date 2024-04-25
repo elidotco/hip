@@ -1,8 +1,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { ArrowLeftIcon } from "react-native-heroicons/solid";
+import { useAuth } from "../../auth/AuthProvider";
 
 const SettinsScreen = ({ navigation }) => {
+  const { logout } = useAuth();
   return (
     <View>
       <View className="w-full bg-blue-100 h-32 flex justify-center">
@@ -17,6 +19,14 @@ const SettinsScreen = ({ navigation }) => {
         </Text> */}
       </View>
       <Text>SettinsScreen</Text>
+      <TouchableOpacity
+        onPress={() => {
+          logout();
+          navigation.navigate("Splash");
+        }}
+      >
+        <Text>LOgout</Text>
+      </TouchableOpacity>
     </View>
   );
 };

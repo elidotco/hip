@@ -19,50 +19,63 @@ import client from "../sanity";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getArrayData, getUserInfo, storeArrayData } from "../storage";
+import { useAuth } from "../auth/AuthProvider";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../services/config";
 
 const HomeScreen = ({ navigation }) => {
+  const { users } = useAuth();
   const [datas, setDatas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
+  const [dats, setDats] = useState();
 
   useEffect(() => {
+    if (users == null) {
+      navigation.navigate("Login");
+      return;
+    }
     const checkUserInfo = async () => {
-      const userInfo = await getUserInfo();
-      // Assuming getUserInfo is an async function
-      const fav = getArrayData((key = "Fav"));
+      const docRef = doc(db, "users", users);
+      const docSnap = await getDoc(docRef);
 
-      if (userInfo !== null) {
-        setUser(userInfo);
-        if (fav === null) {
-          const emp = [];
-          storeArrayData((key = "fav"), (value = emp));
-          storeArrayData((key = "booking"), (value = emp));
+      if (docSnap.exists()) {
+        if (docSnap.data().role !== "student") {
+          navigation.replace("Dash");
         }
 
-        // User is not logged in
-        client
-          .fetch(
-            `
-            *[_type=='hostels']{
-              name,
-              _id,
-              cover_image,
-              featured
-            }
-            `
-          )
-          .then((data) => {
-            setDatas(data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching hostel data:", error);
-            setLoading(false);
-          });
+        setDats(docSnap.data());
+        setLoading(false);
       } else {
-        // User is logged in
-        navigation.replace("Login"); // Navigate to the "Home" screen
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
       }
+      const arr = [];
+      const q = query(collection(db, "hostels"));
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+
+        arr.push(doc.data());
+      });
+      setDatas(arr);
+
+      const fav = getArrayData((key = "Fav"));
+
+      if (fav === null) {
+        const emp = [];
+        storeArrayData((key = "fav"), (value = emp));
+        storeArrayData((key = "booking"), (value = emp));
+      }
+      // Assuming getUserInfo is an async function
     };
     checkUserInfo(); // Call the function to check user information
   }, []);
@@ -82,15 +95,15 @@ const HomeScreen = ({ navigation }) => {
       >
         <View className="flex justify-between bg-slate-100 flex-row items-center  py-5 px-5">
           <View className="flex flex-row items-center gap-2">
-            <View className="w-14 h-14 rounded-full flex justify-center items-center border border-gray-200 pl-1 bg-gray-300">
+            <View className="w-14 h-14 rounded-full flex justify-center items-center  bg-white shadow-sm shadow-black  pl-1 ">
               <SvgUri
                 width="80%"
                 height="80%"
-                uri={`https://api.dicebear.com/8.x/miniavs/svg?seed=${user}`}
+                uri={`https://api.dicebear.com/8.x/miniavs/svg?seed=${dats.firstName}`}
               />
             </View>
 
-            <Text className="text-base font-medium">{user}</Text>
+            <Text className="text-base font-medium">{dats.firstName}</Text>
           </View>
         </View>
         <ScrollView>
@@ -105,8 +118,8 @@ const HomeScreen = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
             >
               {datas.map((item) => {
-                return item.featured === "yes" ? (
-                  <HostelCard key={item._id} data={item} />
+                return item.featured ? (
+                  <HostelCard key={item.id} data={item} user={dats} />
                 ) : (
                   ""
                 );
@@ -125,7 +138,9 @@ const HomeScreen = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
             >
               {datas.map((item) => {
-                return <HostelCard one={1} key={item._id} data={item} />;
+                return (
+                  <HostelCard one={1} key={item.id} data={item} user={dats} />
+                );
               })}
             </ScrollView>
           </View>

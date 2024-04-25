@@ -8712,7 +8712,7 @@ qrcode-terminal@0.11.0:
   resolved "https://registry.yarnpkg.com/qrcode-terminal/-/qrcode-terminal-0.11.0.tgz#ffc6c28a2fc0bfb47052b47e23f4f446a5fbdb9e"
   integrity sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==
 
-query-string@^7.1.3:
+query-string@^7.1.0, query-string@^7.1.3:
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.1.3.tgz#a1cf90e994abb113a325804a972d98276fe02328"
   integrity sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==
@@ -8861,6 +8861,13 @@ react-native-heroicons@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/react-native-heroicons/-/react-native-heroicons-4.0.0.tgz#413e0c2925359945fc5aa634417144a2f7fdd29b"
   integrity sha512-RY3XhAr0aQxLtWUkIUifTUBYC3tOspe0pMTHTATpQYyg6Uw7PYO5qmHYFul9w8tvYAB43WDRZ+yomdVmMQ2Jqw==
+
+react-native-open-maps@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-open-maps/-/react-native-open-maps-0.4.3.tgz#767c6621dcf558241afe78a62c5f7924031f270e"
+  integrity sha512-v0F6NHABCG8/7112baa3LqH29fndxSLb2PGWGTPa/QGoQ3rPiXQgCGsASUQmUpQkrSL5DnnmXo5w2d06Q6euBA==
+  dependencies:
+    query-string "^7.1.0"
 
 react-native-picker-select@^9.1.3:
   version "9.1.3"

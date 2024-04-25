@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -5,10 +6,27 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import React from "react";
 import RNPickerSelect from "react-native-picker-select";
+import { useAuth } from "../auth/AuthProvider";
 
 const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState(null);
+  const { login } = useAuth();
+
+  const handleLogin = () => {
+    if (!email || !password) {
+      // Handle missing email, password, or role
+      return;
+    }
+    if (login(email, password)) {
+      navigation.navigate("Splash");
+    } else {
+      navigation.navigate("Dash");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>Hip</Text>
@@ -16,22 +34,19 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputView}>
         <RNPickerSelect
           placeholder={{ label: "Select your Role", value: null }}
-          onValueChange={(value) => console.log(value)}
+          onValueChange={(value) => setRole(value)}
           items={[
-            { label: "JavaScript", value: "JavaScript" },
-            { label: "TypeScript", value: "TypeScript" },
-            { label: "Python", value: "Python" },
-            { label: "Java", value: "Java" },
-            { label: "C++", value: "C++" },
-            { label: "C", value: "C" },
+            { label: "Student", value: "student" },
+            { label: "Hostel Manager", value: "hostelManager" },
           ]}
         />
       </View>
       <View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
-          placeholder="Username"
+          placeholder="Email"
           placeholderTextColor="#003f5c"
+          onChangeText={(text) => setEmail(text)}
         />
       </View>
       <View style={styles.inputView}>
@@ -40,12 +55,10 @@ const LoginScreen = ({ navigation }) => {
           placeholder="Password"
           placeholderTextColor="#003f5c"
           secureTextEntry={true}
+          onChangeText={(text) => setPassword(text)}
         />
       </View>
-      <TouchableOpacity
-        style={styles.loginBtn}
-        onPress={() => navigation.navigate("Ho")}
-      >
+      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
         <Text style={styles.loginText}>LOGIN</Text>
       </TouchableOpacity>
     </View>
